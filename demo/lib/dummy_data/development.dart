@@ -98,6 +98,8 @@ class DummyData {
       return faker.randomGenerator.decimal(scale: 1000000000, min: -500000000);
     } else if (column.type.isSelect) {
       return (column.type.select.items.toList()..shuffle()).first;
+    } else if (column.type.isAdvSelect) {
+      return (column.type.advSelect.items.keys.toList()..shuffle()).first;
     } else if (column.type.isDate) {
       return DateTime.now()
           .add(Duration(days: faker.randomGenerator.integer(365, min: -365)))

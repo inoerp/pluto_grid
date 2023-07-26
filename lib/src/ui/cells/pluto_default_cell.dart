@@ -456,6 +456,21 @@ class _DefaultCellWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (column.hasRenderer) {
+      // return Text(
+      //   'Render ${_text}',
+      //   style: stateManager.configuration.style.cellTextStyle.copyWith(
+      //     decoration: TextDecoration.none,
+      //     fontWeight: FontWeight.normal,
+      //   ),
+      //   overflow: TextOverflow.ellipsis,
+      //   textAlign: column.textAlign.value,
+      // );
+      Container(
+        color: Colors.yellow,
+        child: Center(
+          child: Text(_text),
+        ),
+      );
       return column.renderer!(PlutoColumnRendererContext(
         column: column,
         rowIdx: rowIdx,

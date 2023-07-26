@@ -63,6 +63,12 @@ class RowHelper {
     );
   }
 
+  static PlutoCell cellOfAdvSelectColumn(PlutoColumn column, int rowIdx) {
+    return PlutoCell(
+      value: (column.type.advSelect.items.keys.toList()..shuffle()).first,
+    );
+  }
+
   static PlutoCell cellOfNumberColumn(PlutoColumn column, int rowIdx) {
     return PlutoCell(value: Random().nextInt(10000));
   }

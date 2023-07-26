@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import 'cells/pluto_adv_select_cell.dart';
+import 'cells/pluto_type_ahead_cell.dart';
 import 'ui.dart';
 
 class PlutoBaseCell extends StatelessWidget
@@ -349,9 +351,32 @@ class _CellState extends PlutoStateWithChange<_Cell> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.column.type.isAdvSelect) {
+      return PlutoAdvSelectCell(
+        stateManager: stateManager,
+        cell: widget.cell,
+        column: widget.column,
+        row: widget.row,
+      );
+    } else if (widget.column.type.isTypeAhead) {
+      return PlutoTypeAheadCell(
+        stateManager: stateManager,
+        cell: widget.cell,
+        column: widget.column,
+        row: widget.row,
+      );
+    }
+
     if (_showTypedCell && widget.column.enableEditingMode == true) {
       if (widget.column.type.isSelect) {
         return PlutoSelectCell(
+          stateManager: stateManager,
+          cell: widget.cell,
+          column: widget.column,
+          row: widget.row,
+        );
+      } else if (widget.column.type.isAdvSelect) {
+        return PlutoAdvSelectCell(
           stateManager: stateManager,
           cell: widget.cell,
           column: widget.column,

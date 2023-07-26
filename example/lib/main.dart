@@ -31,65 +31,14 @@ class PlutoGridExamplePage extends StatefulWidget {
 }
 
 class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
-  final List<PlutoColumn> columns = <PlutoColumn>[
-    PlutoColumn(
-      title: 'Id',
-      field: 'id',
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: 'Name',
-      field: 'name',
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: 'Age',
-      field: 'age',
-      type: PlutoColumnType.number(),
-    ),
-    PlutoColumn(
-      title: 'Role',
-      field: 'role',
-      type: PlutoColumnType.select(<String>[
-        'Programmer',
-        'Designer',
-        'Owner',
-      ]),
-    ),
-    PlutoColumn(
-      title: 'Joined',
-      field: 'joined',
-      type: PlutoColumnType.date(),
-    ),
-    PlutoColumn(
-      title: 'Working time',
-      field: 'working_time',
-      type: PlutoColumnType.time(),
-    ),
-    PlutoColumn(
-      title: 'salary',
-      field: 'salary',
-      type: PlutoColumnType.currency(),
-      footerRenderer: (rendererContext) {
-        return PlutoAggregateColumnFooter(
-          rendererContext: rendererContext,
-          formatAsCurrency: true,
-          type: PlutoAggregateColumnType.sum,
-          format: '#,###',
-          alignment: Alignment.center,
-          titleSpanBuilder: (text) {
-            return [
-              const TextSpan(
-                text: 'Sum',
-                style: TextStyle(color: Colors.red),
-              ),
-              const TextSpan(text: ' : '),
-              TextSpan(text: text),
-            ];
-          },
-        );
-      },
-    ),
+  TextEditingController getController(int i) {
+    return controllers[i];
+  }
+
+  final List<TextEditingController> controllers = [
+    TextEditingController(text: ''),
+    TextEditingController(text: ''),
+    TextEditingController(text: ''),
   ];
 
   final List<PlutoRow> rows = [
@@ -98,7 +47,10 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
         'id': PlutoCell(value: 'user1'),
         'name': PlutoCell(value: 'Mike'),
         'age': PlutoCell(value: 20),
+        'grade': PlutoCell(value: '1A'),
         'role': PlutoCell(value: 'Programmer'),
+        'job': PlutoCell(value: '001'),
+        'position': PlutoCell(value: '444444444'),
         'joined': PlutoCell(value: '2021-01-01'),
         'working_time': PlutoCell(value: '09:00'),
         'salary': PlutoCell(value: 300),
@@ -109,7 +61,10 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
         'id': PlutoCell(value: 'user2'),
         'name': PlutoCell(value: 'Jack'),
         'age': PlutoCell(value: 25),
+        'grade': PlutoCell(value: '1B'),
         'role': PlutoCell(value: 'Designer'),
+        'job': PlutoCell(value: '002'),
+        'position': PlutoCell(value: '1111111111111'),
         'joined': PlutoCell(value: '2021-02-01'),
         'working_time': PlutoCell(value: '10:00'),
         'salary': PlutoCell(value: 400),
@@ -120,7 +75,10 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
         'id': PlutoCell(value: 'user3'),
         'name': PlutoCell(value: 'Suzi'),
         'age': PlutoCell(value: 40),
+        'grade': PlutoCell(value: '1B'),
         'role': PlutoCell(value: 'Owner'),
+        'job': PlutoCell(value: '001'),
+        'position': PlutoCell(value: '22222222'),
         'joined': PlutoCell(value: '2021-03-01'),
         'working_time': PlutoCell(value: '11:00'),
         'salary': PlutoCell(value: 700),
@@ -148,7 +106,7 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
       body: Container(
         padding: const EdgeInsets.all(15),
         child: PlutoGrid(
-          columns: columns,
+          columns: getColumns(),
           rows: rows,
           columnGroups: columnGroups,
           onLoaded: (PlutoGridOnLoadedEvent event) {
@@ -162,5 +120,153 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
         ),
       ),
     );
+  }
+
+  Map<String, dynamic> items = {
+    '001': 'Accountant',
+    '002': 'Buyer',
+    '003': 'Planner',
+  };
+
+  List<DropdownMenuItem<String>> _getSelectItems() {
+    List<DropdownMenuItem<String>> retList = <DropdownMenuItem<String>>[];
+    items.forEach((key, value) {
+      DropdownMenuItem<String> item = DropdownMenuItem(
+        value: key.toString().trim(),
+        child: Text(
+          key,
+          softWrap: true,
+          maxLines: 1,
+          textAlign: TextAlign.center,
+        ),
+      );
+      if (!retList.contains(item)) {
+        retList.add(item);
+      }
+    });
+
+    return retList;
+  }
+
+  getColumns() {
+    final List<PlutoColumn> columns = <PlutoColumn>[
+      PlutoColumn(
+        title: 'Id',
+        field: 'id',
+        type: PlutoColumnType.text(),
+      ),
+      PlutoColumn(
+        title: 'Name',
+        field: 'name',
+        type: PlutoColumnType.text(),
+      ),
+      PlutoColumn(
+        title: 'Grade',
+        field: 'grade',
+        type: PlutoColumnType.typeAhead(),
+      ),
+      PlutoColumn(
+        title: 'Job',
+        field: 'job',
+        type: PlutoColumnType.advSelect(
+          <String, String>{
+            '001': 'Intern',
+            '002': 'Trainee',
+            '003': 'Engineer',
+            '004': 'Sr. Engineer',
+          },
+          displayKey: false,
+          delimiter: " | ",
+        ),
+      ),
+      PlutoColumn(
+          title: 'Position',
+          field: 'position',
+          type: PlutoColumnType.text(),
+          renderer: (context) {
+            return getRenderedWidget(context);
+          }),
+      PlutoColumn(
+        title: 'Role',
+        field: 'role',
+        type: PlutoColumnType.select(<String>[
+          'Programmer',
+          'Designer',
+          'Owner',
+        ], enableColumnFilter: true),
+      ),
+      PlutoColumn(
+        title: 'Joined',
+        field: 'joined',
+        type: PlutoColumnType.date(),
+      ),
+      PlutoColumn(
+        title: 'Age',
+        field: 'age',
+        type: PlutoColumnType.number(),
+      ),
+      PlutoColumn(
+        title: 'Working time',
+        field: 'working_time',
+        type: PlutoColumnType.time(),
+      ),
+      PlutoColumn(
+        title: 'salary',
+        field: 'salary',
+        type: PlutoColumnType.currency(),
+        footerRenderer: (rendererContext) {
+          return PlutoAggregateColumnFooter(
+            rendererContext: rendererContext,
+            formatAsCurrency: true,
+            type: PlutoAggregateColumnType.sum,
+            format: '#,###',
+            alignment: Alignment.center,
+            titleSpanBuilder: (text) {
+              return [
+                const TextSpan(
+                  text: 'Sum',
+                  style: TextStyle(color: Colors.red),
+                ),
+                const TextSpan(text: ' : '),
+                TextSpan(text: text),
+              ];
+            },
+          );
+        },
+      ),
+    ];
+
+    return columns;
+  }
+
+  Widget getRenderedWidget(PlutoColumnRendererContext context) {
+    int rowNum = context.rowIdx;
+    final textController = getController(rowNum);
+    return RepaintBoundary(
+        child: Container(
+          width: double.infinity,
+      color: Colors.red,
+      child: Focus(
+        child: TextFormField(
+          keyboardType: TextInputType.text,
+          controller: textController,
+        ),
+      ),
+    ));
+
+    return DropdownButtonFormField(
+        items: _getSelectItems(),
+        isExpanded: true,
+        value: textController.text,
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: EdgeInsets.zero,
+        ),
+        icon: Icon(Icons.arrow_drop_down),
+        onChanged: (newValue) {
+          textController.text = newValue.toString();
+        });
   }
 }

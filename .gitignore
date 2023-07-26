@@ -78,3 +78,16 @@ coverage/
 
 # FVM Support - https://fvm.app/
 .fvm/flutter_sdk
+example/windows/flutter/generated_plugin_registrant.cc
+example/windows/flutter/generated_plugin_registrant.h
+example/windows/flutter/generated_plugins.cmake
+example/windows/flutter/generated_plugin_registrant.cc
+example/windows/flutter/generated_plugin_registrant.h
+example/windows/flutter/generated_plugins.cmake
+demo/windows/flutter/generated_plugins.cmake
+demo/windows/flutter/generated_plugin_registrant.h
+demo/windows/flutter/generated_plugin_registrant.cc
+demo/macos/Flutter/GeneratedPluginRegistrant.swift
+demo/linux/flutter/generated_plugins.cmake
+demo/linux/flutter/generated_plugin_registrant.h
+demo/linux/flutter/generated_plugin_registrant.cc
