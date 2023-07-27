@@ -142,10 +142,10 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
         field: 'grade',
         type: PlutoColumnType.typeAhead(
           onChanged: () {},
-          suggestionsCallback: () async {
+          suggestionsCallback: (params) async {
             List<Map> suggestions = [
               {
-                '001': 001,
+                '001': '001|001|test001',
               },
               {
                 'aa': 'AA',

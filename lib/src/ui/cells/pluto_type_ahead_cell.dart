@@ -32,10 +32,7 @@ class PlutoTypeAheadCell extends StatefulWidget implements TextCell {
 
 class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
     with TextCellState<PlutoTypeAheadCell> {
-
   final _textController = TextEditingController();
-
-
 
   @override
   TextInputType get keyboardType => TextInputType.text;
@@ -55,14 +52,10 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
 
     _textController.text = formattedValue;
 
-
-
     _textController.addListener(() {
       _handleOnChanged(_textController.text.toString());
     });
   }
-
-
 
   void _changeValue() {
     if (formattedValue == _textController.text) {
@@ -73,15 +66,12 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
 
     _textController.text = formattedValue;
 
-
     _textController.selection = TextSelection.fromPosition(
       TextPosition(offset: _textController.text.length),
     );
-
   }
 
-  void _handleOnChanged(String value) {
-  }
+  void _handleOnChanged(String value) {}
 
   void _handleOnComplete() {
     final old = _textController.text;
@@ -95,7 +85,6 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
       FocusScope.of(context).requestFocus(FocusNode());
     });
   }
-
 
   void _handleOnTap() {
     widget.stateManager.setKeepFocus(true);
@@ -139,11 +128,15 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
                 textAlignVertical: TextAlignVertical.center,
                 textAlign: widget.column.textAlign.value,
               ),
-              suggestionsCallback: (pattern) async{
-
+              suggestionsCallback: (pattern) async {
                 //await Future.delayed(Duration(seconds: 2));
-                List<Map> suggestions = [{"001": "1"},{ "002" : "2"}];
-                suggestions = await widget.column.type.typeAhead.suggestionsCallback.call(pattern);
+                List<Map> suggestions = [
+                  {"001": "1"},
+                  {"002": "2"}
+                ];
+                suggestions = await widget
+                    .column.type.typeAhead.suggestionsCallback
+                    .call(pattern);
                 return suggestions;
               },
               itemBuilder: (context, Map suggestion) {
@@ -153,8 +146,21 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
                 );
               },
               onSuggestionSelected: (Map suggestion) {
-                _textController.text = suggestion.values.first.toString();
-                widget.column.type.typeAhead.onSuggestionSelected.call(suggestion);
+                if (suggestion.keys.isEmpty) {
+                  return;
+                }
+                if (suggestion.keys.first is Map &&
+                    (suggestion.keys.first as Map)
+                        .containsKey(widget.column.field)) {
+                  _textController.text =
+                      suggestion.keys.first[widget.column.field].toString();
+                } else {
+                  _textController.text = suggestion.keys.first.toString();
+                }
+                widget.stateManager
+                    .changeCellValue(widget.cell, _textController.text);
+                widget.column.type.typeAhead.onSuggestionSelected
+                    .call(suggestion);
                 // isValueSelected = true;
                 // widget.updateValuesForDeferredSelect.call(suggestion);
                 // // Navigator.of(context).push(MaterialPageRoute(
@@ -167,12 +173,14 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
             width: 48,
             child: IconButton(
               onPressed: () async {
-                final suggestion = await widget.column.type.typeAhead.iconOnClick.call();
+                final suggestion =
+                    await widget.column.type.typeAhead.iconOnClick.call();
                 _textController.text = suggestion.values.first.toString();
                 _handleOnComplete();
-                widget.column.type.typeAhead.onSuggestionSelected.call(suggestion);
+                widget.column.type.typeAhead.onSuggestionSelected
+                    .call(suggestion);
               },
-              icon: Icon( widget.column.type.typeAhead.popupIcon),
+              icon: Icon(widget.column.type.typeAhead.popupIcon),
             ),
           ),
         ],
