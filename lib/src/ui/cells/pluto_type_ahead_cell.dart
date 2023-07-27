@@ -143,7 +143,7 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
 
                 //await Future.delayed(Duration(seconds: 2));
                 List<Map> suggestions = [{"001": "1"},{ "002" : "2"}];
-                suggestions = await widget.column.type.typeAhead.suggestionsCallback.call();
+                suggestions = await widget.column.type.typeAhead.suggestionsCallback.call(pattern);
                 return suggestions;
               },
               itemBuilder: (context, Map suggestion) {
