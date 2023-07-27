@@ -129,12 +129,7 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
                 textAlign: widget.column.textAlign.value,
               ),
               suggestionsCallback: (pattern) async {
-                //await Future.delayed(Duration(seconds: 2));
-                List<Map> suggestions = [
-                  {"001": "1"},
-                  {"002": "2"}
-                ];
-                suggestions = await widget
+                List<Map> suggestions  = await widget
                     .column.type.typeAhead.suggestionsCallback
                     .call(pattern);
                 return suggestions;
@@ -149,14 +144,24 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
                 if (suggestion.keys.isEmpty) {
                   return;
                 }
-                if (suggestion.keys.first is Map &&
-                    (suggestion.keys.first as Map)
-                        .containsKey(widget.column.field)) {
-                  _textController.text =
-                      suggestion.keys.first[widget.column.field].toString();
-                } else {
+                bool setDefaultValue = true;
+                if (suggestion.keys.first is Map) {
+                  if ((suggestion.keys.first as Map)
+                      .containsKey(widget.column.field)) {
+                    _textController.text =
+                        suggestion.keys.first[widget.column.field].toString();
+                    setDefaultValue = false;
+                  } else if ((suggestion.keys.first as Map)
+                      .containsKey("plutoFieldName")) {
+                    _textController.text =
+                        suggestion.keys.first["plutoFieldName"].toString();
+                    setDefaultValue = false;
+                  }
+                }
+                if (setDefaultValue) {
                   _textController.text = suggestion.keys.first.toString();
                 }
+
                 widget.stateManager
                     .changeCellValue(widget.cell, _textController.text);
                 widget.column.type.typeAhead.onSuggestionSelected
