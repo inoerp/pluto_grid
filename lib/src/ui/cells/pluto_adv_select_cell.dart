@@ -56,12 +56,13 @@ class PlutoAdvSelectCellState extends State<PlutoAdvSelectCell> {
   Widget build(BuildContext context) {
     bool valueExists = false;
     for (var element in _selectItems) {
-      if(element.value == _textController.text){
+      if (element.value == _textController.text) {
         valueExists = true;
       }
     }
-    if(_selectItems.isEmpty || !valueExists){
-      return const Text("No elements found");
+    if (_selectItems.isEmpty || !valueExists) {
+      _textController.text = " ";
+      //return const Text("No elements found");
     }
     return DropdownButtonFormField(
         items: _selectItems,
@@ -76,14 +77,19 @@ class PlutoAdvSelectCellState extends State<PlutoAdvSelectCell> {
         ),
         icon: Icon(widget.column.type.advSelect.popupIcon),
         onChanged: (newValue) {
-          _textController.text =newValue.toString();
-          widget.stateManager.changeCellValue(widget.cell, _textController.text);
+          _textController.text = newValue.toString();
+          widget.stateManager
+              .changeCellValue(widget.cell, _textController.text);
         });
   }
 
   List<DropdownMenuItem<String>> _getSelectItems() {
     List<DropdownMenuItem<String>> retList = <DropdownMenuItem<String>>[];
+    bool addEmptyRow = true;
     widget.column.type.advSelect.items.forEach((key, value) {
+      if (value == " ") {
+        addEmptyRow = false;
+      }
       DropdownMenuItem<String> item = DropdownMenuItem(
         key: Key("$key-${value.toString()}"),
         value: key.toString().trim(),
@@ -99,12 +105,25 @@ class PlutoAdvSelectCellState extends State<PlutoAdvSelectCell> {
       }
     });
 
-    if(retList.isEmpty){
+    if (retList.isEmpty) {
       DropdownMenuItem<String> item = DropdownMenuItem(
         key: const Key("no-value-found"),
         value: "no-value-found",
         child: Text(
           "No value found",
+          softWrap: true,
+          maxLines: 1,
+          textAlign: widget.column.textAlign.value,
+        ),
+      );
+      retList.add(item);
+    } else if (addEmptyRow) {
+      //add an empty row
+      DropdownMenuItem<String> item = DropdownMenuItem(
+        key: const Key("no-value-found"),
+        value: " ",
+        child: Text(
+          " ",
           softWrap: true,
           maxLines: 1,
           textAlign: widget.column.textAlign.value,
