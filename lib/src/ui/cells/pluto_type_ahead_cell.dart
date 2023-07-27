@@ -153,8 +153,9 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
                     setDefaultValue = false;
                   } else if ((suggestion.keys.first as Map)
                       .containsKey("plutoFieldName")) {
+                    final keyName = suggestion.keys.first["plutoFieldName"].toString();
                     _textController.text =
-                        suggestion.keys.first["plutoFieldName"].toString();
+                        suggestion.keys.first[keyName].toString();
                     setDefaultValue = false;
                   }
                 }
