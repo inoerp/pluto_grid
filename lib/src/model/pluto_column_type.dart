@@ -115,7 +115,7 @@ abstract class PlutoColumnType {
   factory PlutoColumnType.advSelect(Map<String, dynamic> items,
       {dynamic defaultValue = '',
       bool enableColumnFilter = false,
-      IconData? popupIcon = Icons.arrow_drop_down_circle_outlined,
+      IconData? popupIcon = Icons.arrow_drop_down,
       bool displayKey = false,
       String delimiter = ":"}) {
     return PlutoColumnTypeAdvSelect(
@@ -128,25 +128,45 @@ abstract class PlutoColumnType {
     );
   }
 
-  /// Similar to PlutoColumnType.select. However, the items are map where the value is shown on the UI.
-  /// Provides a selection map<String, dynamic> and sets it as a selection column.
-  ///
+  /// Provides a type ahead text box and search icon next to the text box
   /// If [enableColumnFilter] is true, column filtering is enabled in the selection popup.
-  ///
-  /// Set the suffixIcon in the [popupIcon] cell. Tapping this icon will open a selection popup.
-  /// The default icon is displayed, and if this value is set to null , the icon does not appear.
-  factory PlutoColumnType.typeAhead(
-      {dynamic defaultValue = '',
-      bool enableColumnFilter = false,
-      IconData? popupIcon = Icons.arrow_drop_down,
-      bool displayKey = false,
-      String delimiter = ":"}) {
+  factory PlutoColumnType.typeAhead({
+    dynamic defaultValue = '',
+    bool enableColumnFilter = false,
+    IconData? popupIcon = Icons.search,
+    bool displayKey = false,
+    String delimiter = ":",
+    required Function onChanged,
+    required Function suggestionsCallback,
+    required Function onSuggestionSelected,
+    required Function iconOnClick,
+    InputDecoration? decoration,
+    int minCharsForSuggestions = 3,
+  }) {
     return PlutoColumnTypeAhead(
       defaultValue: defaultValue,
       enableColumnFilter: enableColumnFilter,
       popupIcon: popupIcon,
-      displayKey: displayKey,
-      delimiter: delimiter,
+      onChanged: onChanged,
+      suggestionsCallback: suggestionsCallback,
+      onSuggestionSelected: onSuggestionSelected,
+      decoration: decoration,
+      iconOnClick: iconOnClick,
+      minCharsForSuggestions: minCharsForSuggestions,
+    );
+  }
+
+  factory PlutoColumnType.switchField({
+    bool defaultValue = false,
+    bool enableColumnFilter = false,
+    Function? onChanged,
+    double sizeScale = 0.8,
+  }) {
+    return PlutoColumnTypeSwitchField(
+      defaultValue: defaultValue,
+      enableColumnFilter: enableColumnFilter,
+      onChanged: onChanged,
+        sizeScale: sizeScale,
     );
   }
 
@@ -219,6 +239,8 @@ extension PlutoColumnTypeExtension on PlutoColumnType {
 
   bool get isTypeAhead => this is PlutoColumnTypeAhead;
 
+  bool get isSwitchField => this is PlutoColumnTypeSwitchField;
+
   bool get isDate => this is PlutoColumnTypeDate;
 
   bool get isTime => this is PlutoColumnTypeTime;
@@ -269,6 +291,14 @@ extension PlutoColumnTypeExtension on PlutoColumnType {
     }
 
     return this as PlutoColumnTypeAhead;
+  }
+
+  PlutoColumnTypeSwitchField get switchField {
+    if (this is! PlutoColumnTypeSwitchField) {
+      throw TypeError();
+    }
+
+    return this as PlutoColumnTypeSwitchField;
   }
 
   PlutoColumnTypeDate get date {
@@ -498,22 +528,26 @@ class PlutoColumnTypeAdvSelect
 class PlutoColumnTypeAhead implements PlutoColumnType {
   @override
   final dynamic defaultValue;
-
   final bool enableColumnFilter;
+  final Function onChanged;
+  final Function suggestionsCallback;
+  final Function onSuggestionSelected;
+  final Function iconOnClick;
+  final InputDecoration? decoration;
+  final int minCharsForSuggestions;
 
-  final bool displayKey;
-
-  final String delimiter;
-
-  @override
   final IconData? popupIcon;
 
   const PlutoColumnTypeAhead({
     this.defaultValue,
     required this.enableColumnFilter,
     this.popupIcon,
-    required this.displayKey,
-    required this.delimiter,
+    required this.onChanged,
+    required this.suggestionsCallback,
+    required this.onSuggestionSelected,
+    required this.iconOnClick,
+    required this.minCharsForSuggestions,
+    this.decoration,
   });
 
   @override
@@ -529,6 +563,46 @@ class PlutoColumnTypeAhead implements PlutoColumnType {
   @override
   dynamic makeCompareValue(dynamic v) {
     return v.toString();
+  }
+}
+
+class PlutoColumnTypeSwitchField implements PlutoColumnType {
+  @override
+  final dynamic defaultValue;
+
+  final Function? onChanged;
+
+  final double sizeScale;
+
+  final bool enableColumnFilter;
+
+  const PlutoColumnTypeSwitchField( {
+    this.defaultValue,
+    required this.enableColumnFilter,
+    required this.sizeScale,
+    this.onChanged,
+  });
+
+  @override
+  dynamic makeCompareValue(dynamic v) {
+    return v;
+  }
+
+  @override
+  bool isValid(dynamic value) {
+    if (value is bool) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int compare(dynamic a, dynamic b) {
+    return _compareWithNull(
+      a,
+      b,
+      () => a == b ? 1 : 0,
+    );
   }
 }
 
