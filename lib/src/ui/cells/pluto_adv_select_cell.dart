@@ -97,7 +97,7 @@ class PlutoAdvSelectCellState extends State<PlutoAdvSelectCell> {
           getLabel(key, value.toString()),
           softWrap: true,
           maxLines: 1,
-          textAlign: widget.column.textAlign.value,
+          style: widget.stateManager.configuration.style.cellTextStyle,
         ),
       );
       if (!retList.contains(item)) {
@@ -113,7 +113,7 @@ class PlutoAdvSelectCellState extends State<PlutoAdvSelectCell> {
           "No value found",
           softWrap: true,
           maxLines: 1,
-          textAlign: widget.column.textAlign.value,
+          style: widget.stateManager.configuration.style.cellTextStyle,
         ),
       );
       retList.add(item);
@@ -126,7 +126,7 @@ class PlutoAdvSelectCellState extends State<PlutoAdvSelectCell> {
           " ",
           softWrap: true,
           maxLines: 1,
-          textAlign: widget.column.textAlign.value,
+          style: widget.stateManager.configuration.style.cellTextStyle,
         ),
       );
       retList.add(item);
