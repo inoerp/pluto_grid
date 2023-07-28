@@ -142,6 +142,7 @@ abstract class PlutoColumnType {
     required Function iconOnClick,
     InputDecoration? decoration,
     int minCharsForSuggestions = 3,
+    double sizeScale = 0.7,
   }) {
     return PlutoColumnTypeAhead(
       defaultValue: defaultValue,
@@ -153,6 +154,7 @@ abstract class PlutoColumnType {
       decoration: decoration,
       iconOnClick: iconOnClick,
       minCharsForSuggestions: minCharsForSuggestions,
+      sizeScale: sizeScale
     );
   }
 
@@ -537,8 +539,9 @@ class PlutoColumnTypeAhead implements PlutoColumnType {
   final int minCharsForSuggestions;
 
   final IconData? popupIcon;
+  final double sizeScale;
 
-  const PlutoColumnTypeAhead({
+  const PlutoColumnTypeAhead( {
     this.defaultValue,
     required this.enableColumnFilter,
     this.popupIcon,
@@ -547,6 +550,7 @@ class PlutoColumnTypeAhead implements PlutoColumnType {
     required this.onSuggestionSelected,
     required this.iconOnClick,
     required this.minCharsForSuggestions,
+    required this.sizeScale,
     this.decoration,
   });
 

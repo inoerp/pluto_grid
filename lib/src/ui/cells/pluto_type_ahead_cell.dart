@@ -96,107 +96,110 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
       cellFocus.requestFocus();
     }
 
-    return SizedBox(
-      height: 60,
-      width: 276,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Expanded(
-            child: TypeAheadField(
-              minCharsForSuggestions: 3,
-              textFieldConfiguration: TextFieldConfiguration(
-                focusNode: cellFocus,
-                controller: _textController,
-                //readOnly: widget.column.checkReadOnly(widget.row, widget.cell),
-                onChanged: _handleOnChanged,
-                onEditingComplete: _handleOnComplete,
-                onSubmitted: (_) => _handleOnComplete(),
-                onTap: _handleOnTap,
-                style: widget.stateManager.configuration.style.cellTextStyle,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: EdgeInsets.zero,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Expanded(
+          child: TypeAheadField(
+            minCharsForSuggestions: 3,
+            textFieldConfiguration: TextFieldConfiguration(
+              focusNode: cellFocus,
+              controller: _textController,
+              //readOnly: widget.column.checkReadOnly(widget.row, widget.cell),
+              onChanged: _handleOnChanged,
+              onEditingComplete: _handleOnComplete,
+              onSubmitted: (_) => _handleOnComplete(),
+              onTap: _handleOnTap,
+              style: widget.stateManager.configuration.style.cellTextStyle,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
                 ),
-                maxLines: 1,
-                keyboardType: keyboardType,
-                inputFormatters: inputFormatters,
-                textAlignVertical: TextAlignVertical.center,
-                textAlign: widget.column.textAlign.value,
+                contentPadding: EdgeInsets.zero,
               ),
-              suggestionsCallback: (pattern) async {
-                List<Map> suggestions  = await widget
-                    .column.type.typeAhead.suggestionsCallback
-                    .call(pattern);
-                return suggestions;
-              },
-              itemBuilder: (context, Map suggestion) {
-                String value = suggestion.values.first.toString();
-                return ListTile(
-                  title: Text(value),
-                );
-              },
-              onSuggestionSelected: (Map suggestion) {
-                if (suggestion.keys.isEmpty) {
+              maxLines: 1,
+              keyboardType: keyboardType,
+              inputFormatters: inputFormatters,
+              textAlignVertical: TextAlignVertical.center,
+              textAlign: widget.column.textAlign.value,
+            ),
+            suggestionsCallback: (pattern) async {
+              List<Map> suggestions = await widget
+                  .column.type.typeAhead.suggestionsCallback
+                  .call(pattern);
+              return suggestions;
+            },
+            itemBuilder: (context, Map suggestion) {
+              String value = suggestion.values.first.toString();
+              return ListTile(
+                title: Text(value),
+              );
+            },
+            onSuggestionSelected: (Map selectedValue) {
+              if (selectedValue.keys.isEmpty) {
+                return;
+              }
+              _updateSelectedValue(selectedValue);
+
+              widget.stateManager
+                  .changeCellValue(widget.cell, _textController.text);
+              widget.column.type.typeAhead.onSuggestionSelected
+                  .call(selectedValue);
+            },
+          ),
+        ),
+        SizedBox(
+          width: 48 * widget.column.type.typeAhead.sizeScale,
+          child: Transform.scale(
+            scale: widget.column.type.typeAhead.sizeScale,
+            child: IconButton(
+              onPressed: () async {
+                final selectedValue =
+                    await widget.column.type.typeAhead.iconOnClick.call();
+
+                if (selectedValue.keys.isEmpty) {
                   return;
                 }
-                bool setDefaultValue = true;
-                if (suggestion.keys.first is Map) {
-                  if ((suggestion.keys.first as Map)
-                      .containsKey(widget.column.field)) {
-                    _textController.text =
-                        suggestion.keys.first[widget.column.field].toString();
-                    setDefaultValue = false;
-                  } else if ((suggestion.keys.first as Map)
-                      .containsKey("plutoFieldName")) {
-                    final keyName = suggestion.keys.first["plutoFieldName"].toString();
-                    _textController.text =
-                        suggestion.keys.first[keyName].toString();
-                    setDefaultValue = false;
-                  }
-                }
-                if (setDefaultValue) {
-                  _textController.text = suggestion.keys.first.toString();
-                }
-
+                _updateSelectedValue(selectedValue);
                 widget.stateManager
                     .changeCellValue(widget.cell, _textController.text);
                 widget.column.type.typeAhead.onSuggestionSelected
-                    .call(suggestion);
-                // isValueSelected = true;
-                // widget.updateValuesForDeferredSelect.call(suggestion);
-                // // Navigator.of(context).push(MaterialPageRoute(
-                // //     builder: (context) => ProductPage(product: suggestion)
-                // // ));
-              },
-            ),
-          ),
-          SizedBox(
-            width: 48,
-            child: IconButton(
-              onPressed: () async {
-                final suggestion =
-                    await widget.column.type.typeAhead.iconOnClick.call();
-                _textController.text = suggestion.values.first.toString();
-                _handleOnComplete();
-                widget.column.type.typeAhead.onSuggestionSelected
-                    .call(suggestion);
+                    .call(selectedValue);
               },
               icon: Icon(widget.column.type.typeAhead.popupIcon),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
+  }
+
+  void _updateSelectedValue(Map<dynamic, dynamic> selectedValue) {
+    bool setDefaultValue = true;
+    if (selectedValue.keys.first is Map) {
+      if ((selectedValue.keys.first as Map)
+          .containsKey("plutoFieldName")) {
+        final keyName =
+            selectedValue.keys.first["plutoFieldName"].toString();
+        _textController.text =
+            selectedValue.keys.first[keyName].toString();
+        setDefaultValue = false;
+      } else if ((selectedValue.keys.first as Map)
+          .containsKey(widget.column.field)) {
+        _textController.text =
+            selectedValue.keys.first[widget.column.field].toString();
+        setDefaultValue = false;
+      }
+    }
+    if (setDefaultValue) {
+      _textController.text = selectedValue.keys.first.toString();
+    }
   }
 }
 
 enum _CellEditingStatus {
-  init,
   changed,
   updated;
 

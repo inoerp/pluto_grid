@@ -27,11 +27,6 @@ class PlutoSwitchFieldCellState extends State<PlutoSwitchFieldCell> {
   String get formattedValue =>
       widget.column.formattedValueForDisplayInEditing(widget.cell.value);
 
-
-  // void _handleOnTap() {
-  //   widget.stateManager.setKeepFocus(true);
-  // }
-
   @override
   void initState() {
     super.initState();

@@ -30,10 +30,6 @@ class PlutoAdvSelectCellState extends State<PlutoAdvSelectCell> {
   IconData? get icon => widget.column.type.advSelect.popupIcon;
   late final List<DropdownMenuItem<String>> _selectItems;
 
-  // void _handleOnTap() {
-  //   widget.stateManager.setKeepFocus(true);
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -62,7 +58,6 @@ class PlutoAdvSelectCellState extends State<PlutoAdvSelectCell> {
     }
     if (_selectItems.isEmpty || !valueExists) {
       _textController.text = " ";
-      //return const Text("No elements found");
     }
     return DropdownButtonFormField(
         items: _selectItems,
