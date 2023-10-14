@@ -70,7 +70,10 @@ class PlutoAdvSelectCellState extends State<PlutoAdvSelectCell> {
           ),
           contentPadding: EdgeInsets.zero,
         ),
-        icon: Icon(widget.column.type.advSelect.popupIcon),
+        icon: Icon(
+          widget.column.type.advSelect.popupIcon,
+          size: widget.column.type.advSelect.iconSize,
+        ),
         onChanged: (newValue) {
           _textController.text = newValue.toString();
           widget.stateManager

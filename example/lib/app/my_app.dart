@@ -142,7 +142,7 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
         field: 'grade',
         type: PlutoColumnType.typeAhead(
           onChanged: () {},
-          suggestionsCallback: (params) async {
+          suggestionsCallback: (params, int? i) async {
             List<Map> suggestions = [
               {
                 '001': '001|001|test001',
@@ -159,10 +159,11 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
             ];
             return suggestions;
           },
-          onSuggestionSelected: (Map selected) {
+          onSuggestionSelected: (Map selected, int? i) {
             print("Selected value from my app ${selected.toString()}");
           },
-          iconOnClick: () async {
+          iconOnClick: (int? i) async {
+            print("iconOnClick rowindex ${i.toString()}");
             final retValue = showDialog(
               context: context,
               barrierDismissible: true,

@@ -128,7 +128,7 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
             suggestionsCallback: (pattern) async {
               List<Map> suggestions = await widget
                   .column.type.typeAhead.suggestionsCallback
-                  .call(pattern);
+                  .call(pattern, widget.cell.row.sortIdx);
               return suggestions;
             },
             itemBuilder: (context, Map suggestion) {
@@ -146,7 +146,7 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
               widget.stateManager
                   .changeCellValue(widget.cell, _textController.text);
               widget.column.type.typeAhead.onSuggestionSelected
-                  .call(selectedValue);
+                  .call(selectedValue, widget.cell.row.sortIdx);
             },
           ),
         ),
@@ -157,16 +157,16 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
             child: IconButton(
               onPressed: () async {
                 final selectedValue =
-                    await widget.column.type.typeAhead.iconOnClick.call();
+                    await widget.column.type.typeAhead.iconOnClick.call(widget.cell.row.sortIdx);
 
-                if (selectedValue.keys.isEmpty) {
+                if (selectedValue is Map && selectedValue.keys.isEmpty) {
                   return;
                 }
                 _updateSelectedValue(selectedValue);
                 widget.stateManager
                     .changeCellValue(widget.cell, _textController.text);
                 widget.column.type.typeAhead.onSuggestionSelected
-                    .call(selectedValue);
+                    .call(selectedValue, widget.cell.row.sortIdx);
               },
               icon: Icon(widget.column.type.typeAhead.popupIcon),
             ),

@@ -95,7 +95,7 @@ abstract class PlutoColumnType {
     List<dynamic> items, {
     dynamic defaultValue = '',
     bool enableColumnFilter = false,
-    IconData? popupIcon = Icons.arrow_drop_down,
+    IconData? popupIcon = Icons.arrow_drop_down_circle_outlined,
   }) {
     return PlutoColumnTypeSelect(
       defaultValue: defaultValue,
@@ -112,17 +112,21 @@ abstract class PlutoColumnType {
   ///
   /// Set the suffixIcon in the [popupIcon] cell. Tapping this icon will open a selection popup.
   /// The default icon is displayed, and if this value is set to null , the icon does not appear.
-  factory PlutoColumnType.advSelect(Map<String, dynamic> items,
-      {dynamic defaultValue = '',
-      bool enableColumnFilter = false,
-      IconData? popupIcon = Icons.arrow_drop_down,
-      bool displayKey = false,
-      String delimiter = ":"}) {
+  factory PlutoColumnType.advSelect(
+    Map<String, dynamic> items, {
+    dynamic defaultValue = '',
+    bool enableColumnFilter = false,
+    IconData? popupIcon = Icons.arrow_drop_down_circle_outlined,
+    bool displayKey = false,
+    String delimiter = ":",
+    double iconSize = 16.0,
+  }) {
     return PlutoColumnTypeAdvSelect(
       defaultValue: defaultValue,
       items: items,
       enableColumnFilter: enableColumnFilter,
       popupIcon: popupIcon,
+      iconSize: iconSize,
       displayKey: displayKey,
       delimiter: delimiter,
     );
@@ -133,7 +137,7 @@ abstract class PlutoColumnType {
   factory PlutoColumnType.typeAhead({
     dynamic defaultValue = '',
     bool enableColumnFilter = false,
-    IconData? popupIcon = Icons.search,
+    IconData? popupIcon = Icons.arrow_drop_down,
     bool displayKey = false,
     String delimiter = ":",
     required Function onChanged,
@@ -145,17 +149,16 @@ abstract class PlutoColumnType {
     double sizeScale = 0.7,
   }) {
     return PlutoColumnTypeAhead(
-      defaultValue: defaultValue,
-      enableColumnFilter: enableColumnFilter,
-      popupIcon: popupIcon,
-      onChanged: onChanged,
-      suggestionsCallback: suggestionsCallback,
-      onSuggestionSelected: onSuggestionSelected,
-      decoration: decoration,
-      iconOnClick: iconOnClick,
-      minCharsForSuggestions: minCharsForSuggestions,
-      sizeScale: sizeScale
-    );
+        defaultValue: defaultValue,
+        enableColumnFilter: enableColumnFilter,
+        popupIcon: popupIcon,
+        onChanged: onChanged,
+        suggestionsCallback: suggestionsCallback,
+        onSuggestionSelected: onSuggestionSelected,
+        decoration: decoration,
+        iconOnClick: iconOnClick,
+        minCharsForSuggestions: minCharsForSuggestions,
+        sizeScale: sizeScale);
   }
 
   factory PlutoColumnType.switchField({
@@ -168,7 +171,7 @@ abstract class PlutoColumnType {
       defaultValue: defaultValue,
       enableColumnFilter: enableColumnFilter,
       onChanged: onChanged,
-        sizeScale: sizeScale,
+      sizeScale: sizeScale,
     );
   }
 
@@ -496,16 +499,19 @@ class PlutoColumnTypeAdvSelect
 
   final String delimiter;
 
+  final double iconSize;
+
   @override
   final IconData? popupIcon;
 
-  const PlutoColumnTypeAdvSelect({
+  const PlutoColumnTypeAdvSelect( {
     this.defaultValue,
     required this.items,
     required this.enableColumnFilter,
     this.popupIcon,
     required this.displayKey,
     required this.delimiter,
+    required this.iconSize,
   });
 
   @override
@@ -541,7 +547,7 @@ class PlutoColumnTypeAhead implements PlutoColumnType {
   final IconData? popupIcon;
   final double sizeScale;
 
-  const PlutoColumnTypeAhead( {
+  const PlutoColumnTypeAhead({
     this.defaultValue,
     required this.enableColumnFilter,
     this.popupIcon,
@@ -580,7 +586,7 @@ class PlutoColumnTypeSwitchField implements PlutoColumnType {
 
   final bool enableColumnFilter;
 
-  const PlutoColumnTypeSwitchField( {
+  const PlutoColumnTypeSwitchField({
     this.defaultValue,
     required this.enableColumnFilter,
     required this.sizeScale,
