@@ -103,28 +103,30 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
       children: [
         Expanded(
           child: TypeAheadField(
-            minCharsForSuggestions: 3,
-            textFieldConfiguration: TextFieldConfiguration(
-              focusNode: cellFocus,
-              controller: _textController,
-              //readOnly: widget.column.checkReadOnly(widget.row, widget.cell),
-              onChanged: _handleOnChanged,
-              onEditingComplete: _handleOnComplete,
-              onSubmitted: (_) => _handleOnComplete(),
-              onTap: _handleOnTap,
-              style: widget.stateManager.configuration.style.cellTextStyle,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
+            builder: (context, controller, focusNode) {
+              return TextField(
+                focusNode: cellFocus,
+                controller: _textController,
+                //readOnly: widget.column.checkReadOnly(widget.row, widget.cell),
+                onChanged: _handleOnChanged,
+                onEditingComplete: _handleOnComplete,
+                onSubmitted: (_) => _handleOnComplete(),
+                onTap: _handleOnTap,
+                style: widget.stateManager.configuration.style.cellTextStyle,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.zero,
                 ),
-                contentPadding: EdgeInsets.zero,
-              ),
-              maxLines: 1,
-              keyboardType: keyboardType,
-              inputFormatters: inputFormatters,
-              textAlignVertical: TextAlignVertical.center,
-              textAlign: widget.column.textAlign.value,
-            ),
+                maxLines: 1,
+                keyboardType: keyboardType,
+                inputFormatters: inputFormatters,
+                textAlignVertical: TextAlignVertical.center,
+                textAlign: widget.column.textAlign.value,
+              );
+            },
+
             suggestionsCallback: (pattern) async {
               List<Map> suggestions = await widget
                   .column.type.typeAhead.suggestionsCallback
@@ -137,7 +139,7 @@ class PlutoTypeAheadCellState extends State<PlutoTypeAheadCell>
                 title: Text(value),
               );
             },
-            onSuggestionSelected: (Map selectedValue) {
+            onSelected: (Map selectedValue) {
               if (selectedValue.keys.isEmpty) {
                 return;
               }
